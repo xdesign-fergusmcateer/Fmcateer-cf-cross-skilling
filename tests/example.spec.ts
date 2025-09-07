@@ -1,18 +1,30 @@
 import { test, expect } from '@playwright/test';
 
 test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+  await page.goto('https://www.tombola.co.uk/');
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
+  // Define the locator for the page title element.
+  const pageTitle = page.locator('.t-header__strapline-title.mb-0.my-auto.font-weight-bold');
+
+  // Expects page to have a header that reads 'Britain's Biggest Bingo site'.
+  await expect(pageTitle).toHaveText(/Britain's Biggest Bingo site/);
 });
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+test('Cookie banner is visible', async ({ page }) => {
+  await page.goto('https://www.tombola.co.uk/');
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
+  // Expect cookie banner to be visible.
+  const cookieBanner = page.locator('#onetrust-banner-sdk');
+  await expect(cookieBanner).toBeVisible();
+});
 
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+test('Allow all cookies', async ({ page }) => {
+  await page.goto('https://www.tombola.co.uk/');
+
+  // Click the 'Allow all cookies' button.
+  await page.getByRole('button', { name: 'Allow all cookies' }).click();
+
+  // Expects cookie banner to be hidden.
+  const cookieBanner = page.locator('#onetrust-banner-sdk');
+  await expect(cookieBanner).toBeHidden();
 });
